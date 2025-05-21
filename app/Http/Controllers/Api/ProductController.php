@@ -1,10 +1,11 @@
 <?php
 
-namespace App\Http\Controllers\Api;
+namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use App\Models\Product;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class ProductController extends Controller
 {
@@ -15,7 +16,8 @@ class ProductController extends Controller
      */
     public function index()
     {
-        return response()->json(Product::all());
+        $products = Product::all();
+        return response()->json($products);
     }
 
     /**
@@ -26,16 +28,29 @@ class ProductController extends Controller
      */
     public function store(Request $request)
     {
-        $validated = $request->validate([
+        $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'required|string',
             'price' => 'required|numeric|min:0',
             'stock' => 'required|integer|min:0',
-            'image' => 'nullable|string'
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048'
         ]);
 
-        $product = Product::create($validated);
-        return response()->json($product, 201);
+        $data = $request->all();
+
+        if ($request->hasFile('image')) {
+            $image = $request->file('image');
+            $imageName = time() . '.' . $image->getClientOriginalExtension();
+            $image->storeAs('public/products', $imageName);
+            $data['image'] = 'products/' . $imageName;
+        }
+
+        $product = Product::create($data);
+
+        return response()->json([
+            'message' => 'Product created successfully',
+            'product' => $product
+        ], 201);
     }
 
     /**
@@ -58,16 +73,34 @@ class ProductController extends Controller
      */
     public function update(Request $request, Product $product)
     {
-        $validated = $request->validate([
-            'name' => 'string|max:255',
-            'description' => 'string',
-            'price' => 'numeric|min:0',
-            'stock' => 'integer|min:0',
-            'image' => 'nullable|string'
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'description' => 'required|string',
+            'price' => 'required|numeric|min:0',
+            'stock' => 'required|integer|min:0',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048'
         ]);
 
-        $product->update($validated);
-        return response()->json($product);
+        $data = $request->all();
+
+        if ($request->hasFile('image')) {
+            // Delete old image
+            if ($product->image) {
+                Storage::delete('public/' . $product->image);
+            }
+
+            $image = $request->file('image');
+            $imageName = time() . '.' . $image->getClientOriginalExtension();
+            $image->storeAs('public/products', $imageName);
+            $data['image'] = 'products/' . $imageName;
+        }
+
+        $product->update($data);
+
+        return response()->json([
+            'message' => 'Product updated successfully',
+            'product' => $product
+        ]);
     }
 
     /**
@@ -78,7 +111,14 @@ class ProductController extends Controller
      */
     public function destroy(Product $product)
     {
+        if ($product->image) {
+            Storage::delete('public/' . $product->image);
+        }
+
         $product->delete();
-        return response()->json(null, 204);
+
+        return response()->json([
+            'message' => 'Product deleted successfully'
+        ]);
     }
 }
