@@ -25049,7 +25049,7 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
 
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
-  name: 'App',
+  name: "App",
   setup: function setup() {
     var router = (0,vue_router__WEBPACK_IMPORTED_MODULE_1__.useRouter)();
     var isAuthenticated = (0,vue__WEBPACK_IMPORTED_MODULE_0__.ref)(false);
@@ -25060,31 +25060,31 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
         return _regeneratorRuntime().wrap(function _callee$(_context) {
           while (1) switch (_context.prev = _context.next) {
             case 0:
-              token = localStorage.getItem('token');
+              token = localStorage.getItem("token");
               if (!token) {
-                _context.next = 15;
+                _context.next = 18;
                 break;
               }
-              axios__WEBPACK_IMPORTED_MODULE_2__["default"].defaults.headers.common['Authorization'] = "Bearer ".concat(token);
+              axios__WEBPACK_IMPORTED_MODULE_2__["default"].defaults.headers.common["Authorization"] = "Bearer ".concat(token);
               _context.prev = 3;
               _context.next = 6;
-              return axios__WEBPACK_IMPORTED_MODULE_2__["default"].get('/api/user');
+              return axios__WEBPACK_IMPORTED_MODULE_2__["default"].get("/api/user");
             case 6:
               response = _context.sent;
               user.value = response.data;
               isAuthenticated.value = true;
-              _context.next = 15;
+              _context.next = 18;
               break;
-            case 11:
-              _context.prev = 11;
+            case 14:
+              _context.prev = 14;
               _context.t0 = _context["catch"](3);
-              localStorage.removeItem('token');
-              delete axios__WEBPACK_IMPORTED_MODULE_2__["default"].defaults.headers.common['Authorization'];
-            case 15:
+              localStorage.removeItem("token");
+              delete axios__WEBPACK_IMPORTED_MODULE_2__["default"].defaults.headers.common["Authorization"];
+            case 18:
             case "end":
               return _context.stop();
           }
-        }, _callee, null, [[3, 11]]);
+        }, _callee, null, [[3, 14]]);
       }));
       return function checkAuth() {
         return _ref.apply(this, arguments);
@@ -25097,21 +25097,21 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
             case 0:
               _context2.prev = 0;
               _context2.next = 3;
-              return axios__WEBPACK_IMPORTED_MODULE_2__["default"].post('/api/logout');
+              return axios__WEBPACK_IMPORTED_MODULE_2__["default"].post("/api/logout");
             case 3:
               _context2.next = 8;
               break;
             case 5:
               _context2.prev = 5;
               _context2.t0 = _context2["catch"](0);
-              console.error('Logout error:', _context2.t0);
+              console.error("Logout error:", _context2.t0);
             case 8:
               _context2.prev = 8;
-              localStorage.removeItem('token');
-              delete axios__WEBPACK_IMPORTED_MODULE_2__["default"].defaults.headers.common['Authorization'];
+              localStorage.removeItem("token");
+              delete axios__WEBPACK_IMPORTED_MODULE_2__["default"].defaults.headers.common["Authorization"];
               isAuthenticated.value = false;
               user.value = null;
-              router.push('/login');
+              router.push("/login");
               return _context2.finish(8);
             case 15:
             case "end":
@@ -25280,12 +25280,12 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
 
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
-  name: 'Login',
+  name: "Login",
   setup: function setup() {
     var router = (0,vue_router__WEBPACK_IMPORTED_MODULE_1__.useRouter)();
     var form = (0,vue__WEBPACK_IMPORTED_MODULE_0__.ref)({
-      email: '',
-      password: ''
+      email: "",
+      password: ""
     });
     var login = /*#__PURE__*/function () {
       var _ref = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee() {
@@ -25295,18 +25295,18 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
             case 0:
               _context.prev = 0;
               _context.next = 3;
-              return axios__WEBPACK_IMPORTED_MODULE_2__["default"].post('/api/login', form.value);
+              return axios__WEBPACK_IMPORTED_MODULE_2__["default"].post("/api/login", form.value);
             case 3:
               response = _context.sent;
-              localStorage.setItem('token', response.data.token);
-              axios__WEBPACK_IMPORTED_MODULE_2__["default"].defaults.headers.common['Authorization'] = "Bearer ".concat(response.data.token);
-              router.push('/products');
+              localStorage.setItem("token", response.data.token);
+              axios__WEBPACK_IMPORTED_MODULE_2__["default"].defaults.headers.common["Authorization"] = "Bearer ".concat(response.data.token);
+              window.location.href = "/products";
               _context.next = 12;
               break;
             case 9:
               _context.prev = 9;
               _context.t0 = _context["catch"](0);
-              console.error('Login failed:', _context.t0);
+              console.error("Login failed:", _context.t0);
             case 12:
             case "end":
               return _context.stop();
@@ -25773,7 +25773,7 @@ var _hoisted_1 = {
   "class": "bg-white"
 };
 var _hoisted_2 = {
-  "class": "max-w-2xl mx-auto py-16 px-4 sm:py-24 sm:px-6 lg:max-w-7xl lg:px-8"
+  "class": "max-w-2xl mx-auto px-4 sm:px-6 lg:max-w-7xl lg:px-8"
 };
 var _hoisted_3 = {
   "class": "grid grid-cols-1 gap-y-10 sm:grid-cols-2 gap-x-6 lg:grid-cols-3 xl:grid-cols-4 xl:gap-x-8"
