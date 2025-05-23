@@ -52,6 +52,7 @@
           <p class="mt-0.5 text-sm text-gray-500">Shipping and taxes calculated at checkout.</p>
           <div class="mt-6">
             <button
+              @click="checkout"
               class="w-full bg-indigo-600 text-white py-3 px-4 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
             >
               Checkout
@@ -107,13 +108,25 @@ export default {
       }, 0)
     })
 
+    const checkout = async () => {
+      try {
+        const response = await axios.post('/api/cart/checkout')
+        alert(response.data.message)
+        cartItems.value = [] // Clear the cart
+      } catch (error) {
+        console.error('Error during checkout:', error)
+        alert(error.response?.data?.message || 'An error occurred during checkout')
+      }
+    }
+
     onMounted(fetchCart)
 
     return {
       cartItems,
       subtotal,
       updateQuantity,
-      removeItem
+      removeItem,
+      checkout
     }
   }
 }

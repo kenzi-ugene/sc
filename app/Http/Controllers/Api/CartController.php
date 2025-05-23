@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use App\Models\Cart;
 use App\Models\Product;
+use App\Models\Order;
 use Illuminate\Http\Request;
 
 class CartController extends Controller
@@ -112,6 +113,64 @@ class CartController extends Controller
 
         return response()->json([
             'message' => 'Item removed from cart'
+        ]);
+    }
+
+    /**
+     * Process the checkout for the user's cart.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function checkout(Request $request)
+    {
+        $cartItems = Cart::with('product')
+            ->where('user_id', $request->user()->id)
+            ->get();
+
+        if ($cartItems->isEmpty()) {
+            return response()->json([
+                'message' => 'Cart is empty'
+            ], 400);
+        }
+
+        // Check if all items are in stock
+        foreach ($cartItems as $item) {
+            if ($item->product->stock < $item->quantity) {
+                return response()->json([
+                    'message' => "Not enough stock available for {$item->product->name}"
+                ], 400);
+            }
+        }
+
+        // Calculate total amount
+        $totalAmount = $cartItems->sum(function ($item) {
+            return $item->product->price * $item->quantity;
+        });
+
+        // Create order
+        $order = Order::create([
+            'user_id' => $request->user()->id,
+            'total_amount' => $totalAmount,
+            'status' => 'completed'
+        ]);
+
+        // Create order items and update stock
+        foreach ($cartItems as $item) {
+            $order->items()->create([
+                'product_id' => $item->product_id,
+                'quantity' => $item->quantity,
+                'price' => $item->product->price
+            ]);
+
+            $item->product->decrement('stock', $item->quantity);
+            $item->delete();
+        }
+
+        return response()->json([
+            'message' => 'Checkout successful',
+            'order' => $order->load(['items.product']),
+            'total' => $totalAmount
         ]);
     }
 }

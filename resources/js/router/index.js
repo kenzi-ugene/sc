@@ -3,6 +3,7 @@ import Login from '../components/Login.vue'
 import Register from '../components/Register.vue'
 import ProductList from '../components/ProductList.vue'
 import Cart from '../components/Cart.vue'
+import OrderHistory from '../components/OrderHistory.vue'
 
 const routes = [
     {
@@ -31,6 +32,12 @@ const routes = [
         path: '/cart',
         name: 'Cart',
         component: Cart,
+        meta: { requiresAuth: true }
+    },
+    {
+        path: '/orders',
+        name: 'Orders',
+        component: OrderHistory,
         meta: { requiresAuth: true }
     }
 ]
