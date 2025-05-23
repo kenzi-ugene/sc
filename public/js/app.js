@@ -28957,7 +28957,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _Navigation_vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Navigation.vue */ "./resources/js/components/Navigation.vue");
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
-  name: 'Layout',
+  name: "Layout",
   components: {
     Navigation: _Navigation_vue__WEBPACK_IMPORTED_MODULE_0__["default"]
   }
@@ -29055,15 +29055,15 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
 
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
-  name: 'Navigation',
+  name: "Navigation",
   setup: function setup() {
     var router = (0,vue_router__WEBPACK_IMPORTED_MODULE_1__.useRouter)();
     var setupAuth = function setupAuth() {
-      var token = localStorage.getItem('token');
+      var token = localStorage.getItem("token");
       if (token) {
-        axios__WEBPACK_IMPORTED_MODULE_2__["default"].defaults.headers.common['Authorization'] = "Bearer ".concat(token);
+        axios__WEBPACK_IMPORTED_MODULE_2__["default"].defaults.headers.common["Authorization"] = "Bearer ".concat(token);
       } else {
-        delete axios__WEBPACK_IMPORTED_MODULE_2__["default"].defaults.headers.common['Authorization'];
+        delete axios__WEBPACK_IMPORTED_MODULE_2__["default"].defaults.headers.common["Authorization"];
       }
     };
     var logout = /*#__PURE__*/function () {
@@ -29073,17 +29073,17 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
             case 0:
               _context.prev = 0;
               _context.next = 3;
-              return axios__WEBPACK_IMPORTED_MODULE_2__["default"].post('/api/logout');
+              return axios__WEBPACK_IMPORTED_MODULE_2__["default"].post("/api/logout");
             case 3:
-              localStorage.removeItem('token');
-              delete axios__WEBPACK_IMPORTED_MODULE_2__["default"].defaults.headers.common['Authorization'];
-              router.push('/login');
+              localStorage.removeItem("token");
+              delete axios__WEBPACK_IMPORTED_MODULE_2__["default"].defaults.headers.common["Authorization"];
+              router.push("/login");
               _context.next = 11;
               break;
             case 8:
               _context.prev = 8;
               _context.t0 = _context["catch"](0);
-              console.error('Error logging out:', _context.t0);
+              console.error("Error logging out:", _context.t0);
             case 11:
             case "end":
               return _context.stop();
@@ -29185,23 +29185,23 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
 
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
-  name: 'ProductList',
+  name: "ProductList",
   setup: function setup() {
     var products = (0,vue__WEBPACK_IMPORTED_MODULE_0__.ref)([]);
     var showForm = (0,vue__WEBPACK_IMPORTED_MODULE_0__.ref)(false);
     var newProduct = (0,vue__WEBPACK_IMPORTED_MODULE_0__.ref)({
-      name: '',
-      description: '',
-      price: '',
-      stock: '',
+      name: "",
+      description: "",
+      price: "",
+      stock: "",
       image: null
     });
     var editingProduct = (0,vue__WEBPACK_IMPORTED_MODULE_0__.ref)(null);
     var editForm = (0,vue__WEBPACK_IMPORTED_MODULE_0__.ref)({
-      name: '',
-      description: '',
-      price: '',
-      stock: '',
+      name: "",
+      description: "",
+      price: "",
+      stock: "",
       image: null
     });
     var fetchProducts = /*#__PURE__*/function () {
@@ -29212,7 +29212,7 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
             case 0:
               _context.prev = 0;
               _context.next = 3;
-              return axios__WEBPACK_IMPORTED_MODULE_1__["default"].get('/api/products');
+              return axios__WEBPACK_IMPORTED_MODULE_1__["default"].get("/api/products");
             case 3:
               response = _context.sent;
               products.value = response.data;
@@ -29221,7 +29221,7 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
             case 7:
               _context.prev = 7;
               _context.t0 = _context["catch"](0);
-              console.error('Error fetching products:', _context.t0);
+              console.error("Error fetching products:", _context.t0);
             case 10:
             case "end":
               return _context.stop();
@@ -29239,18 +29239,18 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
             case 0:
               _context2.prev = 0;
               _context2.next = 3;
-              return axios__WEBPACK_IMPORTED_MODULE_1__["default"].post('/api/cart', {
+              return axios__WEBPACK_IMPORTED_MODULE_1__["default"].post("/api/cart", {
                 product_id: product.id,
                 quantity: 1
               });
             case 3:
-              alert('Product added to cart!');
+              alert("Product added to cart!");
               _context2.next = 9;
               break;
             case 6:
               _context2.prev = 6;
               _context2.t0 = _context2["catch"](0);
-              console.error('Error adding to cart:', _context2.t0);
+              console.error("Error adding to cart:", _context2.t0);
             case 9:
             case "end":
               return _context2.stop();
@@ -29278,13 +29278,13 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
               }
               _context3.prev = 2;
               _context3.next = 5;
-              return axios__WEBPACK_IMPORTED_MODULE_1__["default"].post('/api/products', formData, {
+              return axios__WEBPACK_IMPORTED_MODULE_1__["default"].post("/api/products", formData, {
                 headers: {
-                  'Content-Type': 'multipart/form-data'
+                  "Content-Type": "multipart/form-data"
                 }
               });
             case 5:
-              alert('Product added!');
+              alert("Product added!");
               showForm.value = false;
               fetchProducts();
               // Optionally, reset form fields here
@@ -29293,7 +29293,7 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
             case 10:
               _context3.prev = 10;
               _context3.t0 = _context3["catch"](2);
-              alert('Error adding product');
+              alert("Error adding product");
             case 13:
             case "end":
               return _context3.stop();
@@ -29309,7 +29309,7 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
         return _regeneratorRuntime().wrap(function _callee4$(_context4) {
           while (1) switch (_context4.prev = _context4.next) {
             case 0:
-              if (confirm('Are you sure you want to delete this product?')) {
+              if (confirm("Are you sure you want to delete this product?")) {
                 _context4.next = 2;
                 break;
               }
@@ -29319,14 +29319,14 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
               _context4.next = 5;
               return axios__WEBPACK_IMPORTED_MODULE_1__["default"]["delete"]("/api/products/".concat(id));
             case 5:
-              alert('Product deleted!');
+              alert("Product deleted!");
               fetchProducts();
               _context4.next = 12;
               break;
             case 9:
               _context4.prev = 9;
               _context4.t0 = _context4["catch"](2);
-              alert('Error deleting product');
+              alert("Error deleting product");
             case 12:
             case "end":
               return _context4.stop();
@@ -29362,16 +29362,16 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
                   formData.append(key, editForm.value[key]);
                 }
               }
-              formData.append('_method', 'PUT');
+              formData.append("_method", "PUT");
               _context5.prev = 3;
               _context5.next = 6;
               return axios__WEBPACK_IMPORTED_MODULE_1__["default"].post("/api/products/".concat(editingProduct.value.id), formData, {
                 headers: {
-                  'Content-Type': 'multipart/form-data'
+                  "Content-Type": "multipart/form-data"
                 }
               });
             case 6:
-              alert('Product updated!');
+              alert("Product updated!");
               editingProduct.value = null;
               fetchProducts();
               _context5.next = 14;
@@ -29379,7 +29379,7 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
             case 11:
               _context5.prev = 11;
               _context5.t0 = _context5["catch"](3);
-              alert('Error updating product');
+              alert("Error updating product");
             case 14:
             case "end":
               return _context5.stop();
@@ -29909,21 +29909,24 @@ var _hoisted_6 = {
   "class": "grid grid-cols-1 gap-y-10 sm:grid-cols-2 gap-x-6 lg:grid-cols-3 xl:grid-cols-4 xl:gap-x-8"
 };
 var _hoisted_7 = {
-  "class": "w-full aspect-w-1 aspect-h-1 bg-gray-200 rounded-lg overflow-hidden xl:aspect-w-7 xl:aspect-h-8"
+  "class": "w-full h-64 bg-gray-200 rounded-lg overflow-hidden"
 };
 var _hoisted_8 = ["src", "alt"];
 var _hoisted_9 = {
-  "class": "mt-4 text-sm text-gray-700"
+  "class": "flex flex-col flex-grow mt-4"
 };
 var _hoisted_10 = {
-  "class": "mt-1 text-lg font-medium text-gray-900"
+  "class": "text-sm text-gray-700 line-clamp-2"
 };
 var _hoisted_11 = {
-  "class": "mt-4"
+  "class": "mt-1 text-lg font-medium text-gray-900"
 };
-var _hoisted_12 = ["onClick"];
+var _hoisted_12 = {
+  "class": "mt-auto space-y-2"
+};
 var _hoisted_13 = ["onClick"];
 var _hoisted_14 = ["onClick"];
+var _hoisted_15 = ["onClick"];
 function render(_ctx, _cache, $props, $setup, $data, $options) {
   return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_1, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_2, [_cache[17] || (_cache[17] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h2", {
     "class": "text-2xl font-extrabold text-gray-900 mb-6"
@@ -29980,7 +29983,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
   }, null, 32 /* NEED_HYDRATION */), _cache[14] || (_cache[14] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", {
     type: "submit",
     "class": "bg-indigo-600 text-white px-4 py-2 rounded"
-  }, "Add", -1 /* HOISTED */))], 32 /* NEED_HYDRATION */)])) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true), $setup.editingProduct ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_5, [_cache[16] || (_cache[16] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h3", {
+  }, " Add ", -1 /* HOISTED */))], 32 /* NEED_HYDRATION */)])) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true), $setup.editingProduct ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_5, [_cache[16] || (_cache[16] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h3", {
     "class": "text-lg font-bold mb-2"
   }, "Edit Product", -1 /* HOISTED */)), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("form", {
     onSubmit: _cache[13] || (_cache[13] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.withModifiers)(function () {
@@ -30030,36 +30033,36 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
   }, null, 32 /* NEED_HYDRATION */), _cache[15] || (_cache[15] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", {
     type: "submit",
     "class": "bg-indigo-600 text-white px-4 py-2 rounded"
-  }, "Update", -1 /* HOISTED */)), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", {
+  }, " Update ", -1 /* HOISTED */)), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", {
     type: "button",
     onClick: _cache[12] || (_cache[12] = function () {
       return $setup.cancelEdit && $setup.cancelEdit.apply($setup, arguments);
     }),
     "class": "ml-2 bg-gray-400 text-white px-4 py-2 rounded"
-  }, "Cancel")], 32 /* NEED_HYDRATION */)])) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_6, [((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)($setup.products, function (product) {
+  }, " Cancel ")], 32 /* NEED_HYDRATION */)])) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_6, [((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)($setup.products, function (product) {
     return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", {
       key: product.id,
-      "class": "group"
+      "class": "group flex flex-col h-[500px]"
     }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_7, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("img", {
       src: product.image ? "/storage/".concat(product.image) : 'https://via.placeholder.com/300',
       alt: product.name,
       "class": "w-full h-full object-center object-cover group-hover:opacity-75"
-    }, null, 8 /* PROPS */, _hoisted_8)]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h3", _hoisted_9, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(product.name), 1 /* TEXT */), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("p", _hoisted_10, "$" + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(product.price), 1 /* TEXT */), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_11, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", {
+    }, null, 8 /* PROPS */, _hoisted_8)]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_9, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h3", _hoisted_10, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(product.name), 1 /* TEXT */), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("p", _hoisted_11, " $" + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(product.price), 1 /* TEXT */), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_12, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", {
       onClick: function onClick($event) {
         return $setup.addToCart(product);
       },
-      "class": "w-full bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 mb-2"
-    }, " Add to Cart ", 8 /* PROPS */, _hoisted_12), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", {
+      "class": "w-full bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+    }, " Add to Cart ", 8 /* PROPS */, _hoisted_13), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", {
       onClick: function onClick($event) {
         return $setup.startEdit(product);
       },
-      "class": "w-full bg-yellow-500 text-white py-2 px-4 rounded-md hover:bg-yellow-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500 mb-2"
-    }, " Edit ", 8 /* PROPS */, _hoisted_13), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", {
+      "class": "w-full bg-yellow-500 text-white py-2 px-4 rounded-md hover:bg-yellow-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500"
+    }, " Edit ", 8 /* PROPS */, _hoisted_14), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", {
       onClick: function onClick($event) {
         return $setup.deleteProduct(product.id);
       },
       "class": "w-full bg-red-600 text-white py-2 px-4 rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
-    }, " Delete ", 8 /* PROPS */, _hoisted_14)])]);
+    }, " Delete ", 8 /* PROPS */, _hoisted_15)])])]);
   }), 128 /* KEYED_FRAGMENT */))])])]);
 }
 
