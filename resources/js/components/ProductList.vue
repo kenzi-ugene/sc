@@ -1,14 +1,32 @@
 <template>
     <div class="bg-white">
-        <div class="max-w-2xl mx-auto px-4 sm:px-6 lg:max-w-7xl lg:px-8">
-            <h2 class="text-2xl font-extrabold text-gray-900 mb-6">Products</h2>
-            <div class="mb-6">
-                <button
-                    @click="showForm = !showForm"
-                    class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
-                >
-                    Add Product
-                </button>
+        <div class="max-w-2xl mx-auto px-4 sm:px-6 lg:max-w-7xl lg:px-8 my-4">
+            <div class="flex flex-start items-center gap-4">
+                <h2 class="text-2xl font-extrabold text-gray-900 mb-6">
+                    Products
+                </h2>
+                <div class="mb-6">
+                    <button
+                        @click="showForm = !showForm"
+                        class="bg-green-600 text-white p-2 rounded-full hover:bg-green-700"
+                        title="Add Product"
+                    >
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            class="h-6 w-6"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                        >
+                            <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="2"
+                                d="M12 4v16m8-8H4"
+                            />
+                        </svg>
+                    </button>
+                </div>
             </div>
             <div v-if="showForm" class="mb-6 bg-gray-100 p-4 rounded">
                 <form @submit.prevent="addProduct">
@@ -108,10 +126,10 @@
                 <div
                     v-for="product in products"
                     :key="product.id"
-                    class="group flex flex-col h-[500px]"
+                    class="group flex flex-col h-[400px] shadow rounded-b-lg"
                 >
                     <div
-                        class="w-full h-64 bg-gray-200 rounded-lg overflow-hidden"
+                        class="w-full h-64 bg-gray-200 rounded-t-lg overflow-hidden"
                     >
                         <img
                             :src="
@@ -123,31 +141,31 @@
                             class="w-full h-full object-center object-cover group-hover:opacity-75"
                         />
                     </div>
-                    <div class="flex flex-col flex-grow mt-4">
+                    <div class="flex flex-col flex-grow p-4 rounded-b-lg">
                         <h3 class="text-sm text-gray-700 line-clamp-2">
                             {{ product.name }}
                         </h3>
                         <p class="mt-1 text-lg font-medium text-gray-900">
                             ${{ product.price }}
                         </p>
-                        <div class="mt-auto space-y-2">
+                        <div class="grid grid-cols-3 gap-2 mt-2">
                             <button
                                 @click="addToCart(product)"
-                                class="w-full bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                                class="bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                             >
-                                Add to Cart
+                                <i class="fas fa-shopping-cart"></i>
                             </button>
                             <button
                                 @click="startEdit(product)"
-                                class="w-full bg-yellow-500 text-white py-2 px-4 rounded-md hover:bg-yellow-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500"
+                                class="bg-yellow-500 text-white py-2 px-4 rounded-md hover:bg-yellow-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500"
                             >
-                                Edit
+                                <i class="fas fa-edit"></i>
                             </button>
                             <button
                                 @click="deleteProduct(product.id)"
-                                class="w-full bg-red-600 text-white py-2 px-4 rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+                                class="bg-red-600 text-white py-2 px-4 rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
                             >
-                                Delete
+                                <i class="fas fa-trash"></i>
                             </button>
                         </div>
                     </div>
@@ -160,10 +178,12 @@
 <script>
 import { ref, onMounted } from "vue";
 import axios from "axios";
+import { useCart } from '../stores/cart';
 
 export default {
     name: "ProductList",
     setup() {
+        const { setCartItems } = useCart();
         const products = ref([]);
         const showForm = ref(false);
         const newProduct = ref({
@@ -193,10 +213,11 @@ export default {
 
         const addToCart = async (product) => {
             try {
-                await axios.post("/api/cart", {
+                const response = await axios.post("/api/cart", {
                     product_id: product.id,
                     quantity: 1,
                 });
+                setCartItems(response.data);
                 alert("Product added to cart!");
             } catch (error) {
                 console.error("Error adding to cart:", error);

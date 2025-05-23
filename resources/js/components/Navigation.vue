@@ -24,6 +24,9 @@
                             active-class="border-indigo-500 text-gray-900"
                         >
                             Cart
+                            <span v-if="cartCount > 0" class="ml-1 text-red-500">
+                                ({{ cartCount }})
+                            </span>
                         </router-link>
                         <router-link
                             to="/orders"
@@ -51,11 +54,13 @@
 import { useRouter } from "vue-router";
 import axios from "axios";
 import { onMounted } from "vue";
+import { useCart } from '../stores/cart';
 
 export default {
     name: "Navigation",
     setup() {
         const router = useRouter();
+        const { cartCount } = useCart();
 
         const setupAuth = () => {
             const token = localStorage.getItem("token");
@@ -85,6 +90,7 @@ export default {
 
         return {
             logout,
+            cartCount
         };
     },
 };

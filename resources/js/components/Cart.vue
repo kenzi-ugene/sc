@@ -67,16 +67,19 @@
 <script>
 import { ref, computed, onMounted } from 'vue'
 import axios from 'axios'
+import { useCart } from '../stores/cart'
 
 export default {
   name: 'Cart',
   setup() {
+    const { setCartItems } = useCart()
     const cartItems = ref([])
 
     const fetchCart = async () => {
       try {
         const response = await axios.get('/api/cart')
         cartItems.value = response.data
+        setCartItems(response.data)
       } catch (error) {
         console.error('Error fetching cart:', error)
       }
