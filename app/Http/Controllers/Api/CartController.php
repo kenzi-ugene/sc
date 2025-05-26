@@ -6,10 +6,14 @@ use App\Http\Controllers\Controller;
 use App\Models\Cart;
 use App\Models\Product;
 use App\Models\Order;
+use App\Models\OrderItem;
 use Illuminate\Http\Request;
+use App\Traits\LogsActivity;
 
 class CartController extends Controller
 {
+    use LogsActivity;
+
     /**
      * Display a listing of the resource.
      *
@@ -17,11 +21,16 @@ class CartController extends Controller
      */
     public function index(Request $request)
     {
-        $cart = Cart::with('product')
+        $cartItems = Cart::with('product')
             ->where('user_id', $request->user()->id)
             ->get();
 
-        return response()->json($cart);
+        $this->logActivity('view_cart', 'User viewed their cart', [
+            'user_id' => $request->user()->id,
+            'item_count' => $cartItems->count()
+        ]);
+
+        return response()->json($cartItems);
     }
 
     /**
@@ -42,7 +51,7 @@ class CartController extends Controller
         if ($product->stock < $request->quantity) {
             return response()->json([
                 'message' => 'Not enough stock available'
-            ], 400);
+            ], 422);
         }
 
         $cartItem = Cart::updateOrCreate(
@@ -55,10 +64,14 @@ class CartController extends Controller
             ]
         );
 
-        return response()->json([
-            'message' => 'Product added to cart',
-            'cart_item' => $cartItem->load('product')
+        $this->logActivity('add_to_cart', 'User added item to cart', [
+            'user_id' => $request->user()->id,
+            'product_id' => $product->id,
+            'product_name' => $product->name,
+            'quantity' => $request->quantity
         ]);
+
+        return response()->json($cartItem->load('product'));
     }
 
     /**
@@ -88,17 +101,22 @@ class CartController extends Controller
         if ($cart->product->stock < $request->quantity) {
             return response()->json([
                 'message' => 'Not enough stock available'
-            ], 400);
+            ], 422);
         }
 
         $cart->update([
             'quantity' => $request->quantity
         ]);
 
-        return response()->json([
-            'message' => 'Cart updated successfully',
-            'cart_item' => $cart->load('product')
+        $this->logActivity('update_cart', 'User updated cart item quantity', [
+            'user_id' => $request->user()->id,
+            'product_id' => $cart->product_id,
+            'product_name' => $cart->product->name,
+            'old_quantity' => $cart->getOriginal('quantity'),
+            'new_quantity' => $request->quantity
         ]);
+
+        return response()->json($cart->load('product'));
     }
 
     /**
@@ -109,11 +127,16 @@ class CartController extends Controller
      */
     public function destroy(Cart $cart)
     {
+        $this->logActivity('remove_from_cart', 'User removed item from cart', [
+            'user_id' => $cart->user_id,
+            'product_id' => $cart->product_id,
+            'product_name' => $cart->product->name,
+            'quantity' => $cart->quantity
+        ]);
+
         $cart->delete();
 
-        return response()->json([
-            'message' => 'Item removed from cart'
-        ]);
+        return response()->json(['message' => 'Item removed from cart']);
     }
 
     /**
@@ -131,46 +154,57 @@ class CartController extends Controller
         if ($cartItems->isEmpty()) {
             return response()->json([
                 'message' => 'Cart is empty'
-            ], 400);
+            ], 422);
         }
 
-        // Check if all items are in stock
+        // Validate stock
         foreach ($cartItems as $item) {
             if ($item->product->stock < $item->quantity) {
                 return response()->json([
-                    'message' => "Not enough stock available for {$item->product->name}"
-                ], 400);
+                    'message' => "Not enough stock for {$item->product->name}"
+                ], 422);
             }
         }
-
-        // Calculate total amount
-        $totalAmount = $cartItems->sum(function ($item) {
-            return $item->product->price * $item->quantity;
-        });
 
         // Create order
         $order = Order::create([
             'user_id' => $request->user()->id,
-            'total_amount' => $totalAmount,
-            'status' => 'completed'
+            'total_amount' => $cartItems->sum(function ($item) {
+                return $item->product->price * $item->quantity;
+            }),
+            'status' => 'pending',
+            'shipping_address' => $request->shipping_address,
+            'billing_address' => $request->billing_address,
+            'payment_method' => $request->payment_method,
+            'payment_status' => 'pending'
         ]);
 
         // Create order items and update stock
         foreach ($cartItems as $item) {
-            $order->items()->create([
+            OrderItem::create([
+                'order_id' => $order->id,
                 'product_id' => $item->product_id,
                 'quantity' => $item->quantity,
                 'price' => $item->product->price
             ]);
 
             $item->product->decrement('stock', $item->quantity);
-            $item->delete();
         }
 
+        // Clear cart
+        $cartItems->each->delete();
+
+        $this->logActivity('checkout', 'User completed checkout', [
+            'user_id' => $request->user()->id,
+            'order_id' => $order->id,
+            'total_amount' => $order->total_amount,
+            'item_count' => $cartItems->count(),
+            'payment_method' => $request->payment_method
+        ]);
+
         return response()->json([
-            'message' => 'Checkout successful',
-            'order' => $order->load(['items.product']),
-            'total' => $totalAmount
+            'message' => 'Order placed successfully',
+            'order' => $order->load('items.product')
         ]);
     }
 }

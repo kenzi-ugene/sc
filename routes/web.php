@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Api\AuthController;
 
 /*
 |--------------------------------------------------------------------------
@@ -17,10 +18,9 @@ Route::get('/', function () {
     return view('app');
 });
 
-
-Route::group(['prefix' => 'admin'], function () {
-    Voyager::routes();
-});
+Route::get('/verify-email/{id}/{hash}', [AuthController::class, 'verifyEmail'])
+    ->middleware(['signed'])
+    ->name('verification.verify');
 
 Route::get('/{any}', function () {
     return view('app');

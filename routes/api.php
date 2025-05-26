@@ -41,4 +41,11 @@ Route::middleware('auth:sanctum')->group(function () {
     // Order routes
     Route::get('/orders', [OrderController::class, 'index']);
     Route::get('/orders/{order}', [OrderController::class, 'show']);
+
+    // Email Verification routes
+    Route::get('/email/verify/{id}', [AuthController::class, 'verifyEmail'])
+        ->name('verification.verify');
+    Route::post('/email/resend', [AuthController::class, 'resendVerificationEmail'])
+        ->middleware('auth:sanctum')
+        ->name('verification.resend');
 });

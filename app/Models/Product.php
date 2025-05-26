@@ -16,4 +16,29 @@ class Product extends Model
         'stock',
         'image'
     ];
+
+    protected $casts = [
+        'price' => 'decimal:2',
+        'stock' => 'integer'
+    ];
+
+    public function prices()
+    {
+        return $this->hasMany(ProductPrice::class);
+    }
+
+    public function getPriceForUser($user = null)
+    {
+        if (!$user) {
+            return $this->price;
+        }
+
+        $basePrice = $this->price;
+
+        if ($user->role === 'member') {
+            $basePrice = $basePrice * 0.9;
+        }
+
+        return $basePrice;
+    }
 }

@@ -29067,40 +29067,80 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
     var router = (0,vue_router__WEBPACK_IMPORTED_MODULE_2__.useRouter)();
     var _useCart = (0,_stores_cart__WEBPACK_IMPORTED_MODULE_1__.useCart)(),
       cartCount = _useCart.cartCount;
-    var setupAuth = function setupAuth() {
-      var token = localStorage.getItem("token");
-      if (token) {
-        axios__WEBPACK_IMPORTED_MODULE_3__["default"].defaults.headers.common["Authorization"] = "Bearer ".concat(token);
-      } else {
-        delete axios__WEBPACK_IMPORTED_MODULE_3__["default"].defaults.headers.common["Authorization"];
-      }
-    };
-    var logout = /*#__PURE__*/function () {
+    var isAuthenticated = (0,vue__WEBPACK_IMPORTED_MODULE_0__.ref)(false);
+    var userName = (0,vue__WEBPACK_IMPORTED_MODULE_0__.ref)('');
+    var setupAuth = /*#__PURE__*/function () {
       var _ref = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee() {
+        var token, response;
         return _regeneratorRuntime().wrap(function _callee$(_context) {
           while (1) switch (_context.prev = _context.next) {
             case 0:
-              _context.prev = 0;
-              _context.next = 3;
+              token = localStorage.getItem("token");
+              if (!token) {
+                _context.next = 16;
+                break;
+              }
+              axios__WEBPACK_IMPORTED_MODULE_3__["default"].defaults.headers.common["Authorization"] = "Bearer ".concat(token);
+              isAuthenticated.value = true;
+              _context.prev = 4;
+              _context.next = 7;
+              return axios__WEBPACK_IMPORTED_MODULE_3__["default"].get("/api/user");
+            case 7:
+              response = _context.sent;
+              userName.value = response.data.name;
+              _context.next = 14;
+              break;
+            case 11:
+              _context.prev = 11;
+              _context.t0 = _context["catch"](4);
+              console.error("Error fetching user data:", _context.t0);
+            case 14:
+              _context.next = 19;
+              break;
+            case 16:
+              delete axios__WEBPACK_IMPORTED_MODULE_3__["default"].defaults.headers.common["Authorization"];
+              isAuthenticated.value = false;
+              userName.value = '';
+            case 19:
+            case "end":
+              return _context.stop();
+          }
+        }, _callee, null, [[4, 11]]);
+      }));
+      return function setupAuth() {
+        return _ref.apply(this, arguments);
+      };
+    }();
+    var logout = /*#__PURE__*/function () {
+      var _ref2 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee2() {
+        return _regeneratorRuntime().wrap(function _callee2$(_context2) {
+          while (1) switch (_context2.prev = _context2.next) {
+            case 0:
+              _context2.prev = 0;
+              _context2.next = 3;
               return axios__WEBPACK_IMPORTED_MODULE_3__["default"].post("/api/logout");
             case 3:
               localStorage.removeItem("token");
               delete axios__WEBPACK_IMPORTED_MODULE_3__["default"].defaults.headers.common["Authorization"];
-              router.push("/login");
-              _context.next = 11;
+              isAuthenticated.value = false;
+              userName.value = '';
+              router.push({
+                name: 'Login'
+              });
+              _context2.next = 13;
               break;
-            case 8:
-              _context.prev = 8;
-              _context.t0 = _context["catch"](0);
-              console.error("Error logging out:", _context.t0);
-            case 11:
+            case 10:
+              _context2.prev = 10;
+              _context2.t0 = _context2["catch"](0);
+              console.error("Error logging out:", _context2.t0);
+            case 13:
             case "end":
-              return _context.stop();
+              return _context2.stop();
           }
-        }, _callee, null, [[0, 8]]);
+        }, _callee2, null, [[0, 10]]);
       }));
       return function logout() {
-        return _ref.apply(this, arguments);
+        return _ref2.apply(this, arguments);
       };
     }();
     (0,vue__WEBPACK_IMPORTED_MODULE_0__.onMounted)(function () {
@@ -29108,7 +29148,9 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
     });
     return {
       logout: logout,
-      cartCount: cartCount
+      cartCount: cartCount,
+      isAuthenticated: isAuthenticated,
+      userName: userName
     };
   }
 });
@@ -29453,40 +29495,59 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
 
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
-  name: 'Register',
+  name: "Register",
   setup: function setup() {
     var router = (0,vue_router__WEBPACK_IMPORTED_MODULE_1__.useRouter)();
     var form = (0,vue__WEBPACK_IMPORTED_MODULE_0__.ref)({
-      name: '',
-      email: '',
-      password: '',
-      password_confirmation: ''
+      name: "",
+      email: "",
+      password: "",
+      password_confirmation: ""
     });
+    var loading = (0,vue__WEBPACK_IMPORTED_MODULE_0__.ref)(false);
+    var error = (0,vue__WEBPACK_IMPORTED_MODULE_0__.ref)("");
+    var success = (0,vue__WEBPACK_IMPORTED_MODULE_0__.ref)("");
     var register = /*#__PURE__*/function () {
       var _ref = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee() {
-        var response;
+        var response, _e$response;
         return _regeneratorRuntime().wrap(function _callee$(_context) {
           while (1) switch (_context.prev = _context.next) {
             case 0:
-              _context.prev = 0;
-              _context.next = 3;
-              return axios__WEBPACK_IMPORTED_MODULE_2__["default"].post('/api/register', form.value);
-            case 3:
+              loading.value = true;
+              error.value = "";
+              success.value = "";
+              _context.prev = 3;
+              _context.next = 6;
+              return axios__WEBPACK_IMPORTED_MODULE_2__["default"].post("/api/register", form.value);
+            case 6:
               response = _context.sent;
-              localStorage.setItem('token', response.data.token);
-              axios__WEBPACK_IMPORTED_MODULE_2__["default"].defaults.headers.common['Authorization'] = "Bearer ".concat(response.data.token);
-              router.push('/products');
-              _context.next = 12;
+              success.value = response.data.message;
+              form.value = {
+                name: "",
+                email: "",
+                password: "",
+                password_confirmation: ""
+              };
+              router.push("/login");
+              _context.next = 15;
               break;
-            case 9:
-              _context.prev = 9;
-              _context.t0 = _context["catch"](0);
-              console.error('Registration failed:', _context.t0);
             case 12:
+              _context.prev = 12;
+              _context.t0 = _context["catch"](3);
+              if ((_e$response = _context.t0.response) !== null && _e$response !== void 0 && (_e$response = _e$response.data) !== null && _e$response !== void 0 && _e$response.errors) {
+                error.value = Object.values(_context.t0.response.data.errors).flat().join(", ");
+              } else {
+                error.value = "Registration failed. Please try again.";
+              }
+            case 15:
+              _context.prev = 15;
+              loading.value = false;
+              return _context.finish(15);
+            case 18:
             case "end":
               return _context.stop();
           }
-        }, _callee, null, [[0, 9]]);
+        }, _callee, null, [[3, 12, 15, 18]]);
       }));
       return function register() {
         return _ref.apply(this, arguments);
@@ -29494,7 +29555,10 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
     }();
     return {
       form: form,
-      register: register
+      register: register,
+      loading: loading,
+      error: error,
+      success: success
     };
   }
 });
@@ -29748,6 +29812,7 @@ var _hoisted_5 = {
   "class": "flex-shrink-0 flex items-center"
 };
 var _hoisted_6 = {
+  key: 0,
   "class": "hidden sm:ml-6 sm:flex sm:space-x-8"
 };
 var _hoisted_7 = {
@@ -29756,6 +29821,9 @@ var _hoisted_7 = {
 };
 var _hoisted_8 = {
   "class": "flex items-center"
+};
+var _hoisted_9 = {
+  "class": "text-gray-700 mr-4"
 };
 function render(_ctx, _cache, $props, $setup, $data, $options) {
   var _component_router_link = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("router-link");
@@ -29768,7 +29836,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
     }),
     _: 1 /* STABLE */,
     __: [1]
-  })]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_6, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_router_link, {
+  })]), $setup.isAuthenticated ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_6, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_router_link, {
     to: "/products",
     "class": "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium",
     "active-class": "border-indigo-500 text-gray-900"
@@ -29798,12 +29866,34 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
     }),
     _: 1 /* STABLE */,
     __: [4]
-  })])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_8, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", {
+  })])) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true)]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_8, [$setup.isAuthenticated ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, {
+    key: 0
+  }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", _hoisted_9, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($setup.userName), 1 /* TEXT */), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", {
     onClick: _cache[0] || (_cache[0] = function () {
       return $setup.logout && $setup.logout.apply($setup, arguments);
     }),
     "class": "ml-3 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-  }, " Logout ")])])])]);
+  }, " Logout ")], 64 /* STABLE_FRAGMENT */)) : ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, {
+    key: 1
+  }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_router_link, {
+    to: "/login",
+    "class": "ml-3 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+  }, {
+    "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
+      return _cache[5] || (_cache[5] = [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)(" Login ")]);
+    }),
+    _: 1 /* STABLE */,
+    __: [5]
+  }), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_router_link, {
+    to: "/register",
+    "class": "ml-3 inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+  }, {
+    "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
+      return _cache[6] || (_cache[6] = [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)(" Register ")]);
+    }),
+    _: 1 /* STABLE */,
+    __: [6]
+  })], 64 /* STABLE_FRAGMENT */))])])])]);
 }
 
 /***/ }),

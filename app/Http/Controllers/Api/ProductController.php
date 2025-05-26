@@ -14,9 +14,15 @@ class ProductController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
         $products = Product::all();
+
+        $products->transform(function ($product) use ($request) {
+            $product->price = $product->getPriceForUser($request->user());
+            return $product;
+        });
+
         return response()->json($products);
     }
 
@@ -59,8 +65,11 @@ class ProductController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show(Product $product)
+    public function show(Request $request, Product $product)
     {
+        // Add user-specific pricing
+        $product->price = $product->getPriceForUser($request->user());
+
         return response()->json($product);
     }
 

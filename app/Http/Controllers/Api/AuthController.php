@@ -8,9 +8,14 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
+use App\Traits\LogsActivity;
+use Illuminate\Auth\Events\Registered;
+use App\Models\ActivityLog;
 
 class AuthController extends Controller
 {
+    use LogsActivity;
+
     public function register(Request $request)
     {
         $request->validate([
@@ -23,15 +28,91 @@ class AuthController extends Controller
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
+            'role' => 'customer',
         ]);
 
-        $token = $user->createToken('auth_token')->plainTextToken;
+        try {
+            event(new Registered($user));
+        } catch (\Exception $e) {
+            \Log::error('Failed to send verification email: ' . $e->getMessage());
+        }
+
+        ActivityLog::create([
+            'user_id' => $user->id,
+            'action' => 'register',
+            'description' => 'New user registration',
+            'metadata' => [
+                'user_id' => $user->id,
+                'email' => $user->email
+            ],
+            'ip_address' => $request->ip(),
+            'user_agent' => $request->userAgent()
+        ]);
 
         return response()->json([
-            'message' => 'Registration successful',
-            'user' => $user,
-            'token' => $token
+            'message' => 'Registration successful. Please check your email to verify your account.',
+            'verification_sent' => true
         ], 201);
+    }
+
+    public function verifyEmail(Request $request)
+    {
+        $user = User::find($request->route('id'));
+
+        if (!$user) {
+            return redirect('/login?error=Invalid verification link');
+        }
+
+        if ($user->hasVerifiedEmail()) {
+            return redirect('/login?message=Email already verified');
+        }
+
+        if ($user->markEmailAsVerified()) {
+            ActivityLog::create([
+                'user_id' => $user->id,
+                'action' => 'email_verified',
+                'description' => 'User verified their email',
+                'metadata' => [
+                    'user_id' => $user->id,
+                    'email' => $user->email
+                ],
+                'ip_address' => $request->ip(),
+                'user_agent' => $request->userAgent()
+            ]);
+
+            return redirect('/login?message=Email verified successfully');
+        }
+
+        return redirect('/login?error=Email verification failed');
+    }
+
+    public function resendVerificationEmail(Request $request)
+    {
+        $user = $request->user();
+
+        if ($user->hasVerifiedEmail()) {
+            return response()->json([
+                'message' => 'Email already verified'
+            ], 400);
+        }
+
+        $user->sendEmailVerificationNotification();
+
+        ActivityLog::create([
+            'user_id' => $user->id,
+            'action' => 'resend_verification',
+            'description' => 'User requested new verification email',
+            'metadata' => [
+                'user_id' => $user->id,
+                'email' => $user->email
+            ],
+            'ip_address' => $request->ip(),
+            'user_agent' => $request->userAgent()
+        ]);
+
+        return response()->json([
+            'message' => 'Verification email sent'
+        ]);
     }
 
     public function login(Request $request)
@@ -41,14 +122,42 @@ class AuthController extends Controller
             'password' => 'required',
         ]);
 
+        $user = User::where('email', $request->email)->first();
+
+        if (!$user) {
+            throw ValidationException::withMessages([
+                'email' => ['The provided credentials are incorrect.'],
+            ]);
+        }
+
+        if (!$user->hasVerifiedEmail()) {
+            // Send verification email again
+            $user->sendEmailVerificationNotification();
+
+            throw ValidationException::withMessages([
+                'email' => ['Please verify your email address first. A new verification email has been sent.'],
+            ]);
+        }
+
         if (!Auth::attempt($request->only('email', 'password'))) {
             throw ValidationException::withMessages([
                 'email' => ['The provided credentials are incorrect.'],
             ]);
         }
 
-        $user = User::where('email', $request->email)->firstOrFail();
         $token = $user->createToken('auth_token')->plainTextToken;
+
+        ActivityLog::create([
+            'user_id' => $user->id,
+            'action' => 'login',
+            'description' => 'User logged in',
+            'metadata' => [
+                'user_id' => $user->id,
+                'email' => $user->email
+            ],
+            'ip_address' => $request->ip(),
+            'user_agent' => $request->userAgent()
+        ]);
 
         return response()->json([
             'message' => 'Login successful',
@@ -59,7 +168,20 @@ class AuthController extends Controller
 
     public function logout(Request $request)
     {
+        $user = $request->user();
         $request->user()->currentAccessToken()->delete();
+
+        ActivityLog::create([
+            'user_id' => $user->id,
+            'action' => 'logout',
+            'description' => 'User logged out',
+            'metadata' => [
+                'user_id' => $user->id,
+                'email' => $user->email
+            ],
+            'ip_address' => $request->ip(),
+            'user_agent' => $request->userAgent()
+        ]);
 
         return response()->json([
             'message' => 'Successfully logged out'
